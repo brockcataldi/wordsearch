@@ -1,6 +1,7 @@
 import { random } from './random'
 import { create2DArray } from './create2DArray'
-import { MAX_ITERATIONS_PER_WORD } from '../constants'
+import { LETTERS, MAX_ITERATIONS_PER_WORD } from '../constants'
+import { getRandomEntries } from './getRandomEntries'
 
 const placeWordHorizontal = (
 	characters: string[],
@@ -124,7 +125,7 @@ const placeWord = (
 	let iterations = 0
 
 	while (iterations < MAX_ITERATIONS_PER_WORD) {
-		const direction = random(0, 2)
+		const direction = random(0, 3)
 
 		switch (direction) {
 			case 3:
@@ -179,8 +180,8 @@ export const generateWordSearch = (
 	words: string[],
 	width: number,
 	height: number
-): [{ [key: string]: boolean }, string[][]] => {
-	const placedWords: { [key: string]: boolean } = {}
+): [string[], string[][]] => {
+	const placedWords: string[] = []
 	let grid = create2DArray('~', width, height)
 
 	for (const word of words.sort((a, b) => b.length - a.length)) {
@@ -188,7 +189,15 @@ export const generateWordSearch = (
 
 		if (results === true) {
 			grid = replacement
-			placedWords[word] = false
+			placedWords.push(word)
+		}
+	}
+
+	for(let y = 0; y < height; y++){
+		for(let x = 0; x < width; x++){
+			if(grid[y][x] === '~'){
+				grid[y][x] = getRandomEntries(LETTERS, 1)[0];
+			}
 		}
 	}
 

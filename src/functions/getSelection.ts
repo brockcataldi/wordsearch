@@ -1,21 +1,57 @@
-import { Direction } from "../constants";
-import { getDirection } from "./getDirection";
+import { Direction } from '../constants'
+import { getDirection } from './getDirection'
 
-export const getSelection = (bounds: HighlightBounds, grid: string[][]) => {
+export const getSelection = (
+	bounds: HighlightBounds,
+	grid: string[][]
+) => {
+	const { start, end } = bounds
 
-    switch(getDirection(bounds)){
+	switch (getDirection(bounds)) {
+		case Direction.HORIZONTAL:
+			return grid[start.y].slice(start.x, end.x + 1).join('')
 
-        case Direction.HORIZONTAL:
-        case Direction.HORIZONTAL_REVERSE:
-        case Direction.VERTICAL:
-        case Direction.VERTICAL_REVERSE:
-        case Direction.BACKWARD:
-        case Direction.BACKWARD_REVERSE:
-        case Direction.FORWARD:
-        case Direction.FORWARD_REVERSE:
-        case Direction.POINT:
-        default: 
-            return grid[bounds.start.y][bounds.start.x]
-    }
+		case Direction.HORIZONTAL_REVERSE:
+			return grid[start.y].slice(end.x, start.x + 1).join('')
 
+		case Direction.VERTICAL:
+			return grid
+				.slice(start.y, end.y + 1)
+				.map((row) => row[start.x])
+				.join('')
+
+		case Direction.VERTICAL_REVERSE:
+			return grid
+				.slice(end.y, start.y + 1)
+				.map((row) => row[start.x])
+				.join('')
+
+		case Direction.BACKWARD:
+			return grid
+				.slice(start.y, end.y + 1)
+				.map((row, index) => row[start.x + index])
+				.join('')
+
+		case Direction.BACKWARD_REVERSE:
+			return grid
+				.slice(end.y, start.y + 1)
+				.map((row, index) => row[end.x + index])
+				.join('')
+
+		case Direction.FORWARD:
+			return grid
+				.slice(start.y, end.y + 1)
+				.map((row, index) => row[start.x - index])
+				.join('')
+
+		case Direction.FORWARD_REVERSE:
+			return grid
+				.slice(end.y, start.y + 1)
+				.map((row, index) => row[end.x - index])
+				.join('')
+
+		case Direction.POINT:
+		default:
+			return grid[bounds.start.y][bounds.start.x]
+	}
 }

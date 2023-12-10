@@ -1,13 +1,11 @@
 import styled, { css } from 'styled-components'
 import { drawHighlight } from '../functions/drawHighlight'
 
-
 interface HighlightProps {
 	$bounds: HighlightBounds
 	$cellSize: number
 	$current: boolean
 }
-
 
 const Highlight = styled.div<HighlightProps>`
 	position: absolute;
@@ -17,7 +15,7 @@ const Highlight = styled.div<HighlightProps>`
 	${({ $cellSize, $bounds, $current }) => {
 		return css`
 			border-radius: ${$cellSize}px;
-			border: 2px solid ${$current ? 'red' : 'black'};
+			border: 2px solid ${$current ? 'red' : 'rgba(0,0,0,0.5)'};
 			${drawHighlight($bounds, $cellSize)}
 		`
 	}}

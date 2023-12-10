@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { getDirection } from '../functions/getDirection'
+import { getSelection } from '../functions/getSelection'
 import { getRandomEntries } from '../functions/getRandomEntries'
 import { generateWordSearch } from '../functions/generateWordSearch'
+import { initalizeGame } from '../functions/initializeGame'
+import { gameSelection } from '../functions/gameSelection'
 
 import { WORDS } from '../constants'
-
 
 import Search from './Search'
 
@@ -32,7 +33,8 @@ const App = () => {
 
 	const [words, setWords] = useState<string[]>([])
 	const [grid, setGrid] = useState<string[][]>([])
-	const [tracked, setTracked] = useState<{ [key: string]: boolean }>({})
+	const [game, setGame] = useState<Game>({})
+	// const [selection, setSelection] = useState<string>('')
 
 	useEffect(() => {
 		setWords(getRandomEntries<string>(WORDS, amount))
@@ -45,27 +47,48 @@ const App = () => {
 			height
 		)
 		setGrid(generatedGrid)
-		setTracked(trackedWords)
+		setGame(initalizeGame(trackedWords))
 	}, [words, width, height])
 
 	const onSelection = (bounds: HighlightBounds) => {
-		const direction = getDirection(bounds);
+		const selection = getSelection(bounds, grid)
+		const found = gameSelection(selection, game)
 
+		if (found.length > 0) {
+			const [word] = found
 
+			setGame({
+				...game,
+				...{
+					[word]: {
+						found: true,
+						bounds,
+					},
+				},
+			})
+		}
 	}
 
 	return (
 		<Wrapper>
 			<List>
-				{Object.entries(tracked)
+				{Object.entries(game)
 					.sort((a, b) => a[0].localeCompare(b[0]))
-					.map(([word, found]) => (
+					.map(([word, data]) => (
 						<Word key={word}>
-							{word} - {found ? 1 : 0}
+							{word} - {data.found ? 1 : 0}
 						</Word>
 					))}
 			</List>
-			<Search width={width} height={height} grid={grid} onSelection={onSelection} />
+			<Search
+				width={width}
+				height={height}
+				grid={grid}
+				found={Object.values(game)
+					.map(({ bounds }) => bounds)
+					.filter((bounds) => bounds !== null)}
+				onSelection={onSelection}
+			/>
 		</Wrapper>
 	)
 }

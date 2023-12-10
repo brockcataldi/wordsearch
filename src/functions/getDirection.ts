@@ -1,4 +1,4 @@
-import { Direction } from "../constants"
+import { Direction } from '../constants'
 
 export const getDirection = (bounds: HighlightBounds): Direction => {
 	const xDifference: number = bounds.end.x - bounds.start.x
@@ -29,7 +29,6 @@ export const getDirection = (bounds: HighlightBounds): Direction => {
 
 		if (xPositive && !yPositive) {
 			return Direction.FORWARD
-
 		}
 	}
 

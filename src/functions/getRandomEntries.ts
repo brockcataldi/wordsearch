@@ -1,4 +1,4 @@
-import { random } from "./random"
+import { random } from './random'
 
 export const getRandomEntries = <T>(array: T[], amount: number): T[] => {
 	const picks: T[] = []

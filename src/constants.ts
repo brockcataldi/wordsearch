@@ -1,4 +1,3 @@
-
 export enum Direction {
 	POINT = 'point',
 	HORIZONTAL = 'horizontal',
@@ -12,6 +11,35 @@ export enum Direction {
 }
 
 export const MAX_ITERATIONS_PER_WORD = 1000
+
+export const LETTERS = [
+	'a',
+	'b',
+	'c',
+	'd',
+	'e',
+	'f',
+	'g',
+	'h',
+	'i',
+	'j',
+	'k',
+	'l',
+	'm',
+	'n',
+	'o',
+	'p',
+	'q',
+	'r',
+	's',
+	't',
+	'u',
+	'v',
+	'w',
+	'x',
+	'y',
+	'z',
+]
 
 export const WORDS = [
 	'ability',

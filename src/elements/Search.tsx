@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import { useRect } from '../functions/useRect'
 import { clamp } from '../functions/clamp'
-import { getDirection } from '../functions/getDirection'
 
 import Highlight from './Highlight'
 
@@ -41,10 +40,17 @@ interface SearchProps {
 	width: number
 	height: number
 	grid: string[][]
-	onSelection: (bounds: HighlightBounds) => void;
+	found: HighlightBounds[]
+	onSelection: (bounds: HighlightBounds) => void
 }
 
-const Search = ({ width, height, grid, onSelection }: SearchProps) => {
+const Search = ({
+	width,
+	height,
+	grid,
+	found,
+	onSelection,
+}: SearchProps) => {
 	const [gridRef, gridRect] = useRect()
 
 	const [cellSize, setCellSize] = useState<number>(0)
@@ -105,8 +111,8 @@ const Search = ({ width, height, grid, onSelection }: SearchProps) => {
 	}
 
 	const handleMouseUp = () => {
-		if(currentHighlight !== null){
-			onSelection(currentHighlight);
+		if (currentHighlight !== null) {
+			onSelection(currentHighlight)
 		}
 		setCurrentHighlight(null)
 	}
@@ -121,6 +127,14 @@ const Search = ({ width, height, grid, onSelection }: SearchProps) => {
 						$current={true}
 					/>
 				) : null}
+				{found.map((entry, index) => (
+					<Highlight
+						key={`found-${index}`}
+						$cellSize={cellSize}
+						$bounds={entry}
+						$current={false}
+					/>
+				))}
 				<Grid
 					ref={gridRef}
 					onMouseDown={handleMouseDown}
@@ -138,18 +152,6 @@ const Search = ({ width, height, grid, onSelection }: SearchProps) => {
 					)}
 				</Grid>
 			</Container>
-			<pre>
-				{JSON.stringify(
-					{
-						currentHighlight,
-						direction: currentHighlight
-							? getDirection(currentHighlight)
-							: null,
-					},
-					null,
-					4
-				)}
-			</pre>
 		</>
 	)
 }
