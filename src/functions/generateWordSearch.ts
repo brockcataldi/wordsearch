@@ -1,5 +1,6 @@
-import { random, create2DArray } from './functions'
-import { MAX_ITERATIONS_PER_WORD } from './constants'
+import { random } from './random'
+import { create2DArray } from './create2DArray'
+import { MAX_ITERATIONS_PER_WORD } from '../constants'
 
 const placeWordHorizontal = (
 	characters: string[],
@@ -182,7 +183,7 @@ export const generateWordSearch = (
 	const placedWords: { [key: string]: boolean } = {}
 	let grid = create2DArray('~', width, height)
 
-	for (let word of words.sort((a, b) => b.length - a.length)) {
+	for (const word of words.sort((a, b) => b.length - a.length)) {
 		const [results, replacement] = placeWord(word, grid, width, height)
 
 		if (results === true) {

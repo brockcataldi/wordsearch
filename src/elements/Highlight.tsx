@@ -1,22 +1,26 @@
-import styled from "styled-components";
+import styled, { css } from 'styled-components'
+import { drawHighlight } from '../functions/drawHighlight'
 
-interface HighlightProps{
-    $bounds: HighlightBounds
-    $cellSize: number
-    $current: boolean
+
+interface HighlightProps {
+	$bounds: HighlightBounds
+	$cellSize: number
+	$current: boolean
 }
 
+
 const Highlight = styled.div<HighlightProps>`
-    position: absolute;
-    box-sizing: border-box;
+	position: absolute;
+	box-sizing: border-box;
+	pointer-events: none;
 
-    ${({$cellSize, $current}) => {
-        return `
-            width: ${$cellSize}px;
-            height: ${$cellSize}px;
-            border: 2px solid ${$current ? 'red' : 'black'};
-        `;
-    }}
-`;
+	${({ $cellSize, $bounds, $current }) => {
+		return css`
+			border-radius: ${$cellSize}px;
+			border: 2px solid ${$current ? 'red' : 'black'};
+			${drawHighlight($bounds, $cellSize)}
+		`
+	}}
+`
 
-export default Highlight;
+export default Highlight

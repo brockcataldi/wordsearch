@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { getRandomEntries } from '../functions'
+import { getDirection } from '../functions/getDirection'
+import { getRandomEntries } from '../functions/getRandomEntries'
+import { generateWordSearch } from '../functions/generateWordSearch'
+
 import { WORDS } from '../constants'
 
-import { generateWordSearch } from '../generateWordSearch'
 
 import Search from './Search'
 
@@ -33,7 +35,7 @@ const App = () => {
 	const [tracked, setTracked] = useState<{ [key: string]: boolean }>({})
 
 	useEffect(() => {
-		setWords(getRandomEntries(WORDS, amount, 15))
+		setWords(getRandomEntries<string>(WORDS, amount))
 	}, [])
 
 	useEffect(() => {
@@ -46,6 +48,12 @@ const App = () => {
 		setTracked(trackedWords)
 	}, [words, width, height])
 
+	const onSelection = (bounds: HighlightBounds) => {
+		const direction = getDirection(bounds);
+
+
+	}
+
 	return (
 		<Wrapper>
 			<List>
@@ -57,7 +65,7 @@ const App = () => {
 						</Word>
 					))}
 			</List>
-			<Search width={width} height={height} grid={grid} />
+			<Search width={width} height={height} grid={grid} onSelection={onSelection} />
 		</Wrapper>
 	)
 }

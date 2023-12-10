@@ -1,13 +1,14 @@
-import { useState, MouseEvent, useRef, useEffect } from 'react'
+import { useState, MouseEvent, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { clamp } from '../functions'
+import { useRect } from '../functions/useRect'
+import { clamp } from '../functions/clamp'
+import { getDirection } from '../functions/getDirection'
+
 import Highlight from './Highlight'
 
 const Container = styled.div`
-	border: 2px solid black;
 	border-radius: 1rem;
-	padding: 1rem;
 	position: relative;
 `
 
@@ -15,8 +16,6 @@ const Grid = styled.div<{ $width: number; $height: number }>`
 	width: 500px;
 	height: 500px;
 	display: grid;
-	user-select: none;
-
 	${({ $width, $height }) => {
 		return `
             grid-template-columns: repeat(${$width}, 1fr);
@@ -25,7 +24,8 @@ const Grid = styled.div<{ $width: number; $height: number }>`
 	}}
 `
 
-const Cell = styled.p`
+const Cell = styled.a`
+	text-decoration: none;
 	margin: 0;
 	font-size: 16px;
 	font-weight: 700;
@@ -33,60 +33,51 @@ const Cell = styled.p`
 	display: grid;
 	place-items: center;
 	pointer-events: none;
+	user-select: none;
+	color: black;
 `
 
 interface SearchProps {
 	width: number
 	height: number
 	grid: string[][]
+	onSelection: (bounds: HighlightBounds) => void;
 }
 
-const Search = ({ width, height, grid }: SearchProps) => {
-	const ref = useRef<HTMLDivElement>(null)
+const Search = ({ width, height, grid, onSelection }: SearchProps) => {
+	const [gridRef, gridRect] = useRect()
 
+	const [cellSize, setCellSize] = useState<number>(0)
 	const [currentHighlight, setCurrentHighlight] =
 		useState<HighlightBounds | null>(null)
-	const [bounds, setBounds] = useState<DOMRect | null>(null);
-	const [cellSize, setCellSize] = useState<number>(0);
 
 	useEffect(() => {
-		if (ref.current) {
-			setBounds(ref.current.getBoundingClientRect())
+		if (gridRect !== null) {
+			setCellSize(gridRect.width / width)
 		}
-	}, [])
-
-	useEffect(() => {
-		if(bounds !== null){
-			setCellSize(bounds.width / width)
-		}
-	}, [bounds])
+	}, [gridRect, width])
 
 	const getMousePosition = (
 		event: MouseEvent<HTMLElement>
 	): GridPosition | null => {
-
-		if(bounds !== null){
+		if (gridRect !== null) {
 			const { clientX, clientY } = event
 
 			return {
 				x: clamp(
-					Math.floor(
-						(clientX - bounds.left) / cellSize
-					),
+					Math.floor((clientX - gridRect.left) / cellSize),
 					0,
 					width - 1
 				),
 				y: clamp(
-					Math.floor(
-						(clientY - bounds.top) / cellSize
-					),
+					Math.floor((clientY - gridRect.top) / cellSize),
 					0,
 					height - 1
 				),
 			}
 		}
-		
-		return null;
+
+		return null
 	}
 
 	const handleMouseDown = (event: MouseEvent<HTMLElement>) => {
@@ -114,32 +105,52 @@ const Search = ({ width, height, grid }: SearchProps) => {
 	}
 
 	const handleMouseUp = () => {
-		if (currentHighlight !== null) {
-			setCurrentHighlight(null)
+		if(currentHighlight !== null){
+			onSelection(currentHighlight);
 		}
+		setCurrentHighlight(null)
 	}
 
 	return (
-		<Container>
-			{
-				currentHighlight && cellSize ? <Highlight $cellSize={cellSize} $bounds={currentHighlight} $current={true} /> : null
-			}
-			<Grid
-				ref={ref}
-				onMouseDown={handleMouseDown}
-				onMouseMove={handleMouseMove}
-				onMouseUp={handleMouseUp}
-				$width={width}
-				$height={height}
-			>
-				{grid.map((row, y) =>
-					row.map((cell, x) => (
-						<Cell key={`cell-${x}-${y}`}>{cell}</Cell>
-					))
+		<>
+			<Container>
+				{currentHighlight && cellSize ? (
+					<Highlight
+						$cellSize={cellSize}
+						$bounds={currentHighlight}
+						$current={true}
+					/>
+				) : null}
+				<Grid
+					ref={gridRef}
+					onMouseDown={handleMouseDown}
+					onMouseMove={handleMouseMove}
+					onMouseUp={handleMouseUp}
+					$width={width}
+					$height={height}
+				>
+					{grid.map((row, y) =>
+						row.map((cell, x) => (
+							<Cell href="#" key={`cell-${x}-${y}`}>
+								{cell}
+							</Cell>
+						))
+					)}
+				</Grid>
+			</Container>
+			<pre>
+				{JSON.stringify(
+					{
+						currentHighlight,
+						direction: currentHighlight
+							? getDirection(currentHighlight)
+							: null,
+					},
+					null,
+					4
 				)}
-			</Grid>
-			<pre>{JSON.stringify({ currentHighlight }, null, 4)}</pre>
-		</Container>
+			</pre>
+		</>
 	)
 }
 

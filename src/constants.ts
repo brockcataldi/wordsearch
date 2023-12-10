@@ -1,3 +1,16 @@
+
+export enum Direction {
+	POINT = 'point',
+	HORIZONTAL = 'horizontal',
+	HORIZONTAL_REVERSE = 'horizontal_reverse',
+	VERTICAL = 'vertical',
+	VERTICAL_REVERSE = 'vertical_reverse',
+	FORWARD = 'forward',
+	FORWARD_REVERSE = 'forward_reverse',
+	BACKWARD = 'backward',
+	BACKWARD_REVERSE = 'backward_reverse',
+}
+
 export const MAX_ITERATIONS_PER_WORD = 1000
 
 export const WORDS = [
