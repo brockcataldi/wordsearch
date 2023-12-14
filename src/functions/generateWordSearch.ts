@@ -193,10 +193,10 @@ export const generateWordSearch = (
 		}
 	}
 
-	for(let y = 0; y < height; y++){
-		for(let x = 0; x < width; x++){
-			if(grid[y][x] === '~'){
-				grid[y][x] = getRandomEntries(LETTERS, 1)[0];
+	for (let y = 0; y < height; y++) {
+		for (let x = 0; x < width; x++) {
+			if (grid[y][x] === '~') {
+				grid[y][x] = getRandomEntries(LETTERS, 1)[0]
 			}
 		}
 	}

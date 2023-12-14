@@ -1,30 +1,46 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import { WORDS } from '../constants'
+
+import { gameSelection } from '../functions/gameSelection'
 import { getSelection } from '../functions/getSelection'
 import { getRandomEntries } from '../functions/getRandomEntries'
 import { generateWordSearch } from '../functions/generateWordSearch'
 import { initalizeGame } from '../functions/initializeGame'
-import { gameSelection } from '../functions/gameSelection'
-
-import { WORDS } from '../constants'
 
 import Search from './Search'
+import WordList from './WordList'
 
 const Wrapper = styled.main`
 	display: grid;
-	grid-template-columns: 200px 534px 1fr;
 	width: 100%;
-	gap: 1rem;
+	grid-template-columns: 534px 200px;
 `
 
-const List = styled.ul`
-	list-style-type: none;
-	padding: 0;
+const Container = styled.div`
+	padding: 1rem;
+`
+
+const Box = styled.div`
+	max-width: 734px;
+	margin: 0 auto;
+	border: 2px solid black;
+	border-radius: 0.5rem; 
+	overflow: hidden;
+`
+
+const Header = styled.header`
+	padding: 1rem;
+	background-color: white;
+	position: relative;
+	z-index: 1;
+	border-bottom: 2px solid black;
+`
+
+const Title = styled.h1`
 	margin: 0;
 `
-
-const Word = styled.li``
 
 const App = () => {
 	const width = 15
@@ -34,7 +50,6 @@ const App = () => {
 	const [words, setWords] = useState<string[]>([])
 	const [grid, setGrid] = useState<string[][]>([])
 	const [game, setGame] = useState<Game>({})
-	// const [selection, setSelection] = useState<string>('')
 
 	useEffect(() => {
 		setWords(getRandomEntries<string>(WORDS, amount))
@@ -70,26 +85,25 @@ const App = () => {
 	}
 
 	return (
-		<Wrapper>
-			<List>
-				{Object.entries(game)
-					.sort((a, b) => a[0].localeCompare(b[0]))
-					.map(([word, data]) => (
-						<Word key={word}>
-							{word} - {data.found ? 1 : 0}
-						</Word>
-					))}
-			</List>
-			<Search
-				width={width}
-				height={height}
-				grid={grid}
-				found={Object.values(game)
-					.map(({ bounds }) => bounds)
-					.filter((bounds) => bounds !== null)}
-				onSelection={onSelection}
-			/>
-		</Wrapper>
+		<Box>
+			<Header>
+				<Title>Word Search</Title>
+			</Header>
+			<Wrapper>
+				<Container>
+					<Search
+						width={width}
+						height={height}
+						grid={grid}
+						found={Object.values(game)
+							.map(({ bounds }) => bounds)
+							.filter((bounds) => bounds !== null)}
+						onSelection={onSelection}
+					/>
+				</Container>
+				<WordList game={game} />
+			</Wrapper>
+		</Box>
 	)
 }
 

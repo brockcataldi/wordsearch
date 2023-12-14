@@ -11,6 +11,10 @@ const GlobalStyle = createGlobalStyle`
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
+
+	body{
+		padding: 1rem;
+	}
 `
 
 export default GlobalStyle

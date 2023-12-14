@@ -7,7 +7,6 @@ import { clamp } from '../functions/clamp'
 import Highlight from './Highlight'
 
 const Container = styled.div`
-	border-radius: 1rem;
 	position: relative;
 `
 
